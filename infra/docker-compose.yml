@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  frontend:
+    build:
+      context: ../frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+    command: npm run dev
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: backend
+    volumes:
+      - ../backend:/app
+    ports:
+      - "8000:8000"
+
+  db:                                    # ← インデントを backend と同じレベルに
+    image: mysql:8.0
+    container_name: todo-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: todo_app
+      MYSQL_USER: todo_user
+      MYSQL_PASSWORD: todo_pass
+      TZ: Asia/Tokyo
+    ports:
+      - "3307:3306"
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
