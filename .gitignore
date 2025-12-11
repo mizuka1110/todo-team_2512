@@ -8,6 +8,9 @@ __pycache__/
 # Environment files
 .env
 
+# Firebase Admin Secret Key (絶対にGitに入れない)
+serviceAccountKey.json
+
 # macOS
 .DS_Store
 
@@ -23,3 +26,6 @@ docker-compose.override.yml
 # Dist / build
 dist/
 build/
+
+# personal memo (exclude)
+local-memo.md
