@@ -1,0 +1,5 @@
+fastapi>=0.105
+SQLAlchemy>=2.0
+pymysql
+alembic
+uvicorn

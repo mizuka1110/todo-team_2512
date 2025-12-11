@@ -29,3 +29,16 @@ build/
 
 # personal memo (exclude)
 local-memo.md
+
+# Next.js build cache
+.next/
+
+# Local environment files
+.env.local
+env.local
+
+# Next.js output (standalone / build)
+out/
+
+# TypeScript build info
+*.tsbuildinfo
