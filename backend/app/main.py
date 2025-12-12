@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 from app.core.database import SessionLocal
 
 app = FastAPI()
@@ -15,5 +16,8 @@ def get_db():
 # ヘルスチェックルート
 @app.get("/health")
 def health(db: Session = Depends(get_db)):
-    result = db.execute("SELECT 1")
-    return {"status": "ok", "db": result.scalar()}
+    try:
+        result = db.execute(text("SELECT 1"))
+        return {"status": "ok", "db": result.scalar()}
+    except Exception as e:
+        return {"status": "fail", "db": 0, "error": str(e)}
