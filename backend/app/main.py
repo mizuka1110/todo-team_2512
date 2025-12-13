@@ -45,3 +45,10 @@ def protected(user=Depends(verify_token)):
         "uid": user["uid"],
         "email": user.get("email")
     }
+
+@app.get("/tasks")
+def get_tasks(user=Depends(verify_token)):
+    uid = user["uid"]
+    tasks = get_tasks_by_uid(uid)      # ←さるちゃんへ、ここからDBとの接続、多分
+    return tasks
+

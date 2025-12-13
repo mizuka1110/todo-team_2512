@@ -47,10 +47,11 @@ export default function LoginPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-
+        
+        {/* このボタンが Firebase のログイン処理を呼ぶ */}
         <button
           className="border border-gray-400 py-2 rounded text-lg hover:bg-gray-100 transition"
-          onClick={handleLogin} // ←このボタンが Firebase のログイン処理を呼ぶ！
+          onClick={handleLogin}
         >
           Log In
         </button>
