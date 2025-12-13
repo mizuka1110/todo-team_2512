@@ -1,11 +1,14 @@
+from pathlib import Path
 import firebase_admin
-from firebase_admin import credentials, auth
+from firebase_admin import credentials
 
-# ⚠ この JSON は backend だけで使う秘密鍵（リポジトリには基本入れない）
-cred = credentials.Certificate("serviceAccountKey.json")
+# firebase_admin.py と同じフォルダ（= backend/app/）を基準に探す
+key_path = Path(__file__).resolve().parent / "serviceAccountKey.json"
 
-# アプリ全体で1回だけ実行される初期化
-firebase_admin.initialize_app(cred)
+print("KEY_PATH:", key_path)
+print("KEY_FIRST16:", open(key_path, "rb").read(16))
 
-# 他のファイルから import しやすいように auth をそのまま export しておく
-__all__ = ["auth"]
+cred = credentials.Certificate(str(key_path))
+
+if not firebase_admin._apps:
+    firebase_admin.initialize_app(cred)

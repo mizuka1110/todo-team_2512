@@ -19,6 +19,8 @@ export default function LoginPage() {
         password
       );
       console.log("ログイン成功:", userCredential.user);
+      const token = await userCredential.user.getIdToken();
+      console.log("ID TOKEN:", token);
       router.push("/dashboard");
     } catch (error) {
       console.error("ログイン失敗:", error);
@@ -48,7 +50,7 @@ export default function LoginPage() {
 
         <button
           className="border border-gray-400 py-2 rounded text-lg hover:bg-gray-100 transition"
-          onClick={handleLogin}   // ←このボタンが Firebase のログイン処理を呼ぶ！
+          onClick={handleLogin} // ←このボタンが Firebase のログイン処理を呼ぶ！
         >
           Log In
         </button>
