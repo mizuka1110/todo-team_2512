@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 14, "column": 0}, "map": {"version":3,"sources":["file:///app/src/app/page.tsx"],"sourcesContent":["\nimport Link from \"next/link\";\n\nexport default function HomePage() {\n  return (\n    <div className=\"text-center mt-10\">\n      <h1 className=\"text-4xl font-bold mb-6\">Todo</h1>\n      <p className=\"text-gray-600 mb-10\">\n        A simple task<br />management tool\n      </p>\n\n      <Link\n        href=\"/login\"\n        className=\"block border border-gray-400 py-2 rounded text-lg\"\n      >\n        Log In\n      </Link>\n    </div>\n  );\n}\n"],"names":[],"mappings":";;;;;AACA;;;AAEe,SAAS;IACtB,qBACE,8OAAC;QAAI,WAAU;;0BACb,8OAAC;gBAAG,WAAU;0BAA0B;;;;;;0BACxC,8OAAC;gBAAE,WAAU;;oBAAsB;kCACpB,8OAAC;;;;;oBAAK;;;;;;;0BAGrB,8OAAC,0LAAI;gBACH,MAAK;gBACL,WAAU;0BACX;;;;;;;;;;;;AAKP"}}]
-}
