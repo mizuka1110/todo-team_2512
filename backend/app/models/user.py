@@ -18,4 +18,4 @@ class User(Base):
         )
 
 # ④ Task 側と 1:N
-    tasks = relationship("Task", back_populates="user")
+    tasks = relationship("Task", back_populates="user", cascade="all, delete-orphan")
