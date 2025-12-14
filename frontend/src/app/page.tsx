@@ -15,33 +15,51 @@ export default function HomePage() {
   }, [user, loading, router]);
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="min-h-screen grid place-items-center bg-white text-black">
+        <div className="text-sm tracking-wide text-neutral-500">Loading…</div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="w-full max-w-sm text-center">
-        {/* タイトル */}
-        <h1 className="text-5xl font-bold tracking-tight mb-10">
-          Todo
-        </h1>
+    <div className="min-h-screen bg-white text-black">
+      <div className="mx-auto max-w-md px-6 py-16">
+        <div className="border border-neutral-200 rounded-2xl p-10">
+          <h1 className="text-5xl font-semibold tracking-tight">
+            Todo
+          </h1>
+          <p className="mt-3 text-sm leading-relaxed text-neutral-500">
+            Minimal task manager. Clean. Fast. Focused.
+          </p>
 
-        {/* メインボタン */}
-        <Link
-          href="/login"
-          className="
-            block w-full
-            border border-gray-300
-            py-3
-            rounded-lg
-            text-lg font-semibold
-            transition
-            hover:bg-gray-100
-            active:scale-[0.99]
-          "
-        >
-          使ってみる
-        </Link>
+          <div className="mt-10 space-y-3">
+            <Link
+              href="/login"
+              className="
+                group inline-flex w-full items-center justify-center gap-2
+                rounded-xl border border-neutral-900
+                bg-neutral-900 px-5 py-3
+                text-sm font-semibold text-white
+                transition
+                hover:bg-black
+                active:translate-y-[1px]
+                focus:outline-none focus:ring-2 focus:ring-neutral-300
+              "
+            >
+              使ってみる
+              <span className="transition group-hover:translate-x-0.5">→</span>
+            </Link>
+
+            <div className="text-center text-xs text-neutral-500">
+              続行することで利用規約に同意したものとみなされます
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 text-center text-xs text-neutral-400">
+          © Todo
+        </div>
       </div>
     </div>
   );
