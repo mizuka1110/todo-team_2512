@@ -16,4 +16,5 @@ class Task(Base):
     is_done = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
-    owner = relationship("User", backref="tasks")
+    user = relationship("User", back_populates="tasks")
+
