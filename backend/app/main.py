@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import text
+from app.core.firebase import init_firebase
 
 from app.core.database import SessionLocal
 from app.core.security import verify_token
@@ -52,3 +53,6 @@ def get_tasks(user=Depends(verify_token)):
     tasks = get_tasks_by_uid(uid)      # ←さるちゃんへ、ここからDBとの接続、多分
     return tasks
 
+@app.on_event("startup")
+def startup():
+    init_firebase()
