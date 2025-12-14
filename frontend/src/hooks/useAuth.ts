@@ -6,18 +6,16 @@ import { auth } from "@/lib/firebase";
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true); // ① 追加
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
+    const unsub = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
-
-      if (firebaseUser) {
-        const token = await firebaseUser.getIdToken();
-        console.log("ID TOKEN:", token);
-      }
+      setLoading(false); // ② 判定が終わったらfalse
     });
+
     return () => unsub();
   }, []);
 
-  return { user };
+  return { user, loading }; // ③ returnにloading追加
 }

@@ -1,20 +1,48 @@
+"use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function HomePage() {
-  return (
-    <div className="text-center mt-10">
-      <h1 className="text-4xl font-bold mb-6">Todo</h1>
-      <p className="text-gray-600 mb-10">
-        A simple task<br />management tool
-      </p>
+  const router = useRouter();
+  const { user, loading } = useAuth();
 
-      <Link
-        href="/login"
-        className="block border border-gray-400 py-2 rounded text-lg"
-      >
-        Log In
-      </Link>
+  useEffect(() => {
+    if (loading) return;
+    if (user) router.replace("/dashboard");
+  }, [user, loading, router]);
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="w-full max-w-sm text-center">
+        {/* タイトル */}
+        <h1 className="text-5xl font-bold tracking-tight mb-10">
+          Todo
+        </h1>
+
+        {/* メインボタン */}
+        <Link
+          href="/login"
+          className="
+            block w-full
+            border border-gray-300
+            py-3
+            rounded-lg
+            text-lg font-semibold
+            transition
+            hover:bg-gray-100
+            active:scale-[0.99]
+          "
+        >
+          使ってみる
+        </Link>
+      </div>
     </div>
   );
 }
