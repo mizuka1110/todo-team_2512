@@ -1,15 +1,50 @@
 # backend/app/crud/task_crud.py
 
-from typing import List, Any
+from typing import List
+from sqlalchemy.orm import Session
+from ..models.task import Task
+from ..models.user import User
+from ..database import get_db  # SessionLocal を返す関数
 
-def get_tasks_by_uid(uid: str) -> List[Any]:
-    # TODO: DB実装待ち
-    return []
+# タスク取得
+def get_tasks_by_uid(db: Session, uid: str) -> List[Task]:
+    return db.query(Task).filter(Task.user_firebase_uid == uid).all()
 
-def create_task_by_uid(uid: str, task: Any) -> None:
-    # TODO: DB実装待ち
-    pass
+# タスク作成
+def create_task_by_uid(db: Session, uid: str, title: str, description: str = None, due_date = None) -> Task:
+    new_task = Task(
+        user_firebase_uid=uid,
+        title=title,
+        description=description,
+        due_date=due_date
+    )
+    db.add(new_task)
+    db.commit()
+    db.refresh(new_task)  # IDなど自動生成値を取得
+    return new_task
 
-def delete_task_by_uid(uid: str, task_id: int) -> None:
-    # TODO: DB実装待ち
-    pass
+# タスク削除
+def delete_task_by_uid(db: Session, uid: str, task_id: int) -> bool:
+    task = db.query(Task).filter(Task.task_id == task_id, Task.user_firebase_uid == uid).first()
+    if task:
+        db.delete(task)
+        db.commit()
+        return True
+    return False
+
+# タスク更新
+def update_task_by_uid(db: Session, uid: str, task_id: int, title: str = None, description: str = None, due_date = None, is_done: bool = None) -> Task | None:
+    task = db.query(Task).filter(Task.task_id == task_id, Task.user_firebase_uid == uid).first()
+    if not task:
+        return None
+    if title is not None:
+        task.title = title
+    if description is not None:
+        task.description = description
+    if due_date is not None:
+        task.due_date = due_date
+    if is_done is not None:
+        task.is_done = is_done
+    db.commit()
+    db.refresh(task)
+    return task
