@@ -4,7 +4,8 @@ from typing import List
 from sqlalchemy.orm import Session
 from ..models.task import Task
 from ..models.user import User
-from ..database import get_db  # SessionLocal を返す関数
+from app.core.database import get_db
+
 
 # タスク取得
 def get_tasks_by_uid(db: Session, uid: str) -> List[Task]:
