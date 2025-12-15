@@ -32,20 +32,3 @@ def delete_task_by_uid(db: Session, uid: str, task_id: int) -> bool:
         db.commit()
         return True
     return False
-
-# タスク更新
-def update_task_by_uid(db: Session, uid: str, task_id: int, title: str = None, description: str = None, due_date = None, is_done: bool = None) -> Task | None:
-    task = db.query(Task).filter(Task.task_id == task_id, Task.user_firebase_uid == uid).first()
-    if not task:
-        return None
-    if title is not None:
-        task.title = title
-    if description is not None:
-        task.description = description
-    if due_date is not None:
-        task.due_date = due_date
-    if is_done is not None:
-        task.is_done = is_done
-    db.commit()
-    db.refresh(task)
-    return task

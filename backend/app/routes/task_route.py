@@ -18,12 +18,6 @@ class TaskCreate(BaseModel):
     description: str | None = None
     due_date: str | None = None  # ISO形式文字列
 
-class TaskUpdate(BaseModel):
-    title: str | None = None
-    description: str | None = None
-    due_date: str | None = None
-    is_done: bool | None = None
-
 # =========================
 # ルート
 # =========================
@@ -39,20 +33,6 @@ def create_task(task: TaskCreate, db: Session = Depends(get_db), user=Depends(ve
     uid = user["uid"]
     new_task = task_service.add_task(db, uid, task.title, task.description, task.due_date)
     return new_task.__dict__
-
-@router.put("/tasks/{task_id}", response_model=dict)
-def update_task(task_id: int, task: TaskUpdate, db: Session = Depends(get_db), user=Depends(verify_token)):
-    uid = user["uid"]
-    updated_task = task_service.edit_task(
-        db, uid, task_id,
-        title=task.title,
-        description=task.description,
-        due_date=task.due_date,
-        is_done=task.is_done
-    )
-    if not updated_task:
-        return {"error": "Task not found"}
-    return updated_task.__dict__
 
 @router.delete("/tasks/{task_id}")
 def delete_task(task_id: int, db: Session = Depends(get_db), user=Depends(verify_token)):
