@@ -1,11 +1,12 @@
+# app/firebase_admin.py
 import firebase_admin
 from firebase_admin import credentials, auth
 
-# ⚠ この JSON は backend だけで使う秘密鍵（リポジトリには基本入れない）
-cred = credentials.Certificate("serviceAccountKey.json")
+cred = credentials.Certificate("app/serviceAccountKey.json")
 
-# アプリ全体で1回だけ実行される初期化
-firebase_admin.initialize_app(cred)
+if not firebase_admin._apps:
+    firebase_admin.initialize_app(cred)
 
-# 他のファイルから import しやすいように auth をそのまま export しておく
-__all__ = ["auth"]
+def verify_firebase_token(token: str) -> dict:
+    decoded_token = auth.verify_id_token(token)
+    return decoded_token

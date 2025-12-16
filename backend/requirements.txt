@@ -4,3 +4,4 @@ pymysql
 alembic
 uvicorn
 cryptography
+firebase-admin
