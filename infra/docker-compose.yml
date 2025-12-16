@@ -24,9 +24,11 @@ services:
       - ../backend:/app
     ports:
       - "8000:8000"
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
     depends_on:
     - db
+    environment:
+    - FIREBASE_SERVICE_ACCOUNT_KEY=/app/app/serviceAccountKey.json
 
   db:                                    # ← インデントを backend と同じレベルに
     image: mysql:8.0
