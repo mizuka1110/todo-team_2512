@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import text
+from app.core.firebase import init_firebase
 
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,7 +24,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 class TaskCreate(BaseModel):
     title: str
@@ -66,28 +66,34 @@ def protected(user=Depends(verify_token)):
         "uid": user["uid"],
         "email": user.get("email")
     }
+
+# =========================
+# Tasks API
+# =========================
+
 # データ取得
 @app.get("/tasks")
-def get_tasks(user=Depends(verify_token)):
+def get_tasks(db: Session = Depends(get_db), user=Depends(verify_token)):
     uid = user["uid"]
-    tasks = get_tasks_by_uid(uid) 
+    tasks = get_tasks_by_uid(db, uid)
     return tasks
 
 # データ削除
 @app.delete("/tasks/{task_id}")
-def delete_task(task_id: int, user=Depends(verify_token)):
+def delete_task(task_id: int, db: Session = Depends(get_db), user=Depends(verify_token)):
     uid = user["uid"]
-    delete_task_by_uid(task_id, uid)
+    delete_task_by_uid(db, task_id, uid)
     return {"status": "ok"}
 
 # データ作成
 @app.post("/tasks")
-def create_task(
-    task: TaskCreate,
-    user=Depends(verify_token)
-):
+def create_task(task: TaskCreate, db: Session = Depends(get_db), user=Depends(verify_token)):
     uid = user["uid"]
-    new_task = create_task_by_uid(uid, task)
+    new_task = create_task_by_uid(db, uid, task)
     return new_task
+
+@app.on_event("startup")
+def startup():
+    init_firebase()
 
 
