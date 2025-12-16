@@ -5,3 +5,7 @@ alembic
 uvicorn
 cryptography
 firebase-admin
+ruff
+black
+pytest
+pytest-mock

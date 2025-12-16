@@ -1,12 +1,11 @@
-# app/firebase_admin.py
+from pathlib import Path
 import firebase_admin
 from firebase_admin import credentials, auth
 
-cred = credentials.Certificate("app/serviceAccountKey.json")
+# firebase_admin.py と同じフォルダを基準に serviceAccountKey.json を取得
+key_path = Path(__file__).resolve().parent / "serviceAccountKey.json"
+
+cred = credentials.Certificate(str(key_path))
 
 if not firebase_admin._apps:
     firebase_admin.initialize_app(cred)
-
-def verify_firebase_token(token: str) -> dict:
-    decoded_token = auth.verify_id_token(token)
-    return decoded_token
