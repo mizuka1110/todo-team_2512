@@ -69,10 +69,10 @@ export default function DashboardPage() {
 
         <ul className="space-y-3">
           {tasks.map((task) => (
-            <li key={task.id} className="flex items-center gap-3">
+            <li key={task.task_id} className="flex items-center gap-3">
               <input
               type="checkbox"
-              checked={task.done}
+              checked={task.is_done}
               readOnly // クリックでの更新は無効化
               className="h-4 w-4"
               />
@@ -84,7 +84,7 @@ export default function DashboardPage() {
                 {task.title}
               </span>
               <button
-                onClick={() => handleDelete(task.id)}
+                onClick={() => handleDelete(task.task_id)}
                 className="text-sm px-2 py-1 rounded hover:bg-gray-100"
                 aria-label="Delete task"
               >
