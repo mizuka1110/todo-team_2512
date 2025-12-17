@@ -7,28 +7,22 @@ import * as taskService from "@/services/taskService";
 export function useTasks() {
   const { data, mutate } = useSWR<Task[]>("/tasks", taskService.fetchTasks);
 
+  // タスク追加
   async function addTask(title: string) {
     const newTask = await taskService.createTask(title);
+    // mutate でローカルデータを即座に更新
     mutate([...(data ?? []), newTask], false);
   }
 
-  async function toggleTask(task: Task) {
-    const updated = await taskService.toggleTask(task.id, !task.isDone);
-    mutate(
-      data?.map((t) => (t.id === task.id ? updated : t)),
-      false
-    );
-  }
-
+  // タスク削除
   async function deleteTask(id: number) {
     await taskService.deleteTask(id);
-    mutate(data?.filter((t) => t.id !== id), false);
+    mutate(data?.filter((t) => t.task_id !== id), false);
   }
 
   return {
     tasks: data ?? [],
     addTask,
-    toggleTask,
     deleteTask,
   };
 }

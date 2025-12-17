@@ -12,5 +12,15 @@ const firebaseConfig = {
   appId: "1:132179774078:web:3764d3b272dfb37a48662f"
 };
 
-const app = initializeApp(firebaseConfig);
+// Firebase 初期化
+export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+
+/**
+ * ログイン中ユーザーの ID トークンを取得
+ */
+export const getIdToken = async (): Promise<string> => {
+  const user = auth.currentUser;
+  if (!user) throw new Error("User is not logged in");
+  return await user.getIdToken();
+};

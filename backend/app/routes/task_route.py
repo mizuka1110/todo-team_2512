@@ -1,41 +1,52 @@
-# backend/app/routes/task_route.py
-
-from fastapi import APIRouter, Depends
+# app/routes/task_route.py
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.services import task_service
+
 from app.core.database import get_db
-from app.core.security import verify_token
-from pydantic import BaseModel
-from typing import List
+from app.core.security import get_current_firebase_uid
+from app.schemas.task_schema import TaskCreate, TaskOut
+from app.crud import task_crud
 
 router = APIRouter()
 
-# =========================
-# Pydantic モデル
-# =========================
-class TaskCreate(BaseModel):
-    title: str
-    description: str | None = None
-    due_date: str | None = None  # ISO形式文字列
 
-# =========================
-# ルート
-# =========================
+@router.get("/tasks", response_model=list[TaskOut])
+def get_tasks(
+    db: Session = Depends(get_db),
+    firebase_uid: str = Depends(get_current_firebase_uid),
+):
+    return task_crud.get_tasks_by_uid(db, firebase_uid)
 
-@router.get("/tasks", response_model=List[dict])
-def get_tasks(db: Session = Depends(get_db), user=Depends(verify_token)):
-    uid = user["uid"]
-    tasks = task_service.list_tasks(db, uid)
-    return [t.__dict__ for t in tasks]
 
-@router.post("/tasks", response_model=dict)
-def create_task(task: TaskCreate, db: Session = Depends(get_db), user=Depends(verify_token)):
-    uid = user["uid"]
-    new_task = task_service.add_task(db, uid, task.title, task.description, task.due_date)
-    return new_task.__dict__
+@router.post("/tasks", response_model=TaskOut)
+def create_task(
+    payload: TaskCreate,
+    db: Session = Depends(get_db),
+    firebase_uid: str = Depends(get_current_firebase_uid),
+):
+    task = task_crud.create_task_by_uid(
+        db,
+        uid=firebase_uid,
+        title=payload.title,
+        description=payload.description,
+        due_date=payload.due_date,
+    )
+    return task
 
-@router.delete("/tasks/{task_id}")
-def delete_task(task_id: int, db: Session = Depends(get_db), user=Depends(verify_token)):
-    uid = user["uid"]
-    success = task_service.remove_task(db, uid, task_id)
-    return {"status": "ok" if success else "task not found"}
+
+@router.delete("/tasks/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_task(
+    task_id: int,
+    db: Session = Depends(get_db),
+    firebase_uid: str = Depends(get_current_firebase_uid),
+):
+    success = task_crud.delete_task_by_uid(
+        db,
+        firebase_uid,
+        task_id,
+    )
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Task not found",
+        )

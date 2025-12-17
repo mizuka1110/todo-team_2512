@@ -2,9 +2,9 @@
 
 from typing import List
 from sqlalchemy.orm import Session
-from models.task import Task
-from models.user import User
-from core.database import get_db
+from app.models.task import Task
+from app.models.user import User
+from app.core.database import get_db
 
 
 # タスク取得

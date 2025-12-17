@@ -1,99 +1,40 @@
-from fastapi import FastAPI, Depends
-from sqlalchemy.orm import Session
-from sqlalchemy import text
-from app.core.firebase import init_firebase
-
-from pydantic import BaseModel
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.core.database import SessionLocal
-from app.core.security import verify_token
-from app.firebase_admin import *  # Firebase Admin 初期化
-
-from app.crud.task_crud import (
-    get_tasks_by_uid,
-    create_task_by_uid,
-    delete_task_by_uid,
-)
+from app.routes.task_route import router as task_router
+from app.core.firebase_init import init_firebase
 
 app = FastAPI()
+
+# --------------------
+# CORS（必ず router より先）
+# --------------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://frontend:3000",
+    ],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-class TaskCreate(BaseModel):
-    title: str
-    description: str | None = None
+# --------------------
+# Routes
+# --------------------
+app.include_router(task_router)
 
-# =========================
-# DB セッション依存関数
-# =========================
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-# =========================
-# ヘルスチェック
-# =========================
+# --------------------
+# Health
+# --------------------
 @app.get("/health")
-def health(db: Session = Depends(get_db)):
-    try:
-        result = db.execute(text("SELECT 1"))
-        return {
-            "status": "ok",
-            "db": result.scalar()
-        }
-    except Exception as e:
-        return {
-            "status": "fail",
-            "db": 0,
-            "error": str(e)
-        }
-
-# =========================
-# 認証テスト用（Firebase）
-# =========================
-@app.get("/protected")
-def protected(user=Depends(verify_token)):
-    return {
-        "uid": user["uid"],
-        "email": user.get("email")
-    }
-
-# =========================
-# Tasks API
-# =========================
-
-# データ取得
-@app.get("/tasks")
-def get_tasks(db: Session = Depends(get_db), user=Depends(verify_token)):
-    uid = user["uid"]
-    tasks = get_tasks_by_uid(db, uid)
-    return tasks
-
-# データ削除
-@app.delete("/tasks/{task_id}")
-def delete_task(task_id: int, db: Session = Depends(get_db), user=Depends(verify_token)):
-    uid = user["uid"]
-    delete_task_by_uid(db, task_id, uid)
+def health():
     return {"status": "ok"}
 
-# データ作成
-@app.post("/tasks")
-def create_task(task: TaskCreate, db: Session = Depends(get_db), user=Depends(verify_token)):
-    uid = user["uid"]
-    new_task = create_task_by_uid(db, uid, task)
-    return new_task
-
+# --------------------
+# Startup
+# --------------------
 @app.on_event("startup")
 def startup():
     init_firebase()
-
-
