@@ -19,6 +19,19 @@ class TaskCreate(BaseModel):
     due_date: str | None = None  # ISO形式文字列
 
 # =========================
+# helper（★ここに書く）
+# =========================
+def task_to_dict(t):
+    return {
+        "task_id": t.task_id,
+        "title": t.title,
+        "description": t.description,
+        "due_date": t.due_date,
+        "is_done": t.is_done,
+        "created_at": t.created_at,
+    }
+
+# =========================
 # ルート
 # =========================
 
@@ -26,7 +39,7 @@ class TaskCreate(BaseModel):
 def get_tasks(db: Session = Depends(get_db), user=Depends(verify_token)):
     uid = user["uid"]
     tasks = task_service.list_tasks(db, uid)
-    return [t.__dict__ for t in tasks]
+    return [task_to_dict(t) for t in tasks]
 
 @router.post("/tasks", response_model=dict)
 def create_task(task: TaskCreate, db: Session = Depends(get_db), user=Depends(verify_token)):
