@@ -4,7 +4,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAV_IHvS3xSCGLxsVWowWMOusx8ZQ-Sm9E",
+  apiKey: "DUMMY_API_KEY",
   authDomain: "todo-654d9.firebaseapp.com",
   projectId: "todo-654d9",
   storageBucket: "todo-654d9.firebasestorage.app",
